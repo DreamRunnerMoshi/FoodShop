@@ -54,13 +54,13 @@ namespace Core.Services
         public  async Task<User> RegisterUser(CustomerRegistrationRequest request)
         {
             // Check if the username already exists
-            var hasAlreadyExistingUser = await _repository.Any<User>(x => x.UserName == request.UserName);
+            var hasAlreadyExistingUser = await _repository.Any<User>(x => x.UserName == request.MobileNumber);
             if (!hasAlreadyExistingUser)
             {
                 var hashedPassword =  _passwordHasher.HashPassword(new User(), request.Password);
                 var user = new User
                 {
-                    UserName = request.UserName,
+                    UserName = request.MobileNumber,
                     Email = request.Email,
                     Password = hashedPassword
                 };

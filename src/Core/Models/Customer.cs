@@ -12,5 +12,8 @@
 
         public User User { get; set; }
 
+        public string CurrentAddress { get; set; }
+        public string BillingAddress { get; set; }
+
     }
 }

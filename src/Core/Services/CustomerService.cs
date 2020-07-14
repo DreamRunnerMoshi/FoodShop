@@ -31,6 +31,7 @@ namespace Core.Services
                     User = user,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
+                    
                 };
                 await _repository.Insert(customer);
                 await _repository.Save();

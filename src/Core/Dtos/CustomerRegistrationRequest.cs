@@ -2,7 +2,7 @@
 {
     public class CustomerRegistrationRequest
     {
-        public string UserName { get; set; }
+        public string MobileNumber { get; set; }
 
         public string Email { get; set; }
 
@@ -12,6 +12,7 @@
 
         public string LastName { get; set; }
 
-        public short CountryId { get; set; }
+        public string CurrentAddress { get; set; }
+        public string BillingAddress { get; set; }
     }
 }
