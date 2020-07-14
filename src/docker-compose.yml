@@ -1,0 +1,27 @@
+version: "3.4"
+
+services:
+  ShopAPI:
+    image: shopapi:latest
+    build:
+      context: .
+      dockerfile: ShopAPI/Dockerfile
+    environment:
+      ConnectionStrings:DefaultConnection: "Server=shop-db-server;Database=shop-db;User=sa;Password=Password!2;MultipleActiveResultSets=true"
+    depends_on:
+      - shop-db-server
+    ports:
+      - 6005:80
+  shop-db-server:
+    container_name: shop-db-server
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      SA_PASSWORD: "Password!2"
+      ACCEPT_EULA: "Y"
+      MSSQL_AGENT_ENABLED: "true"
+    ports:
+      - "2500:1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+volumes:
+  sqlvolume:
