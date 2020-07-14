@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Dtos;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +26,14 @@ namespace ShopAPI.Controllers
         {
             var products = await productService.GetProducts();
             return Ok(products);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddProduct(ProductAddRequest productAddRequest)
+        {
+            await productService.AddProduct(productAddRequest);
+            return Ok();
         }
     }
 }

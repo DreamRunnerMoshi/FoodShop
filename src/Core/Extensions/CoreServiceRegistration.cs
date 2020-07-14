@@ -31,7 +31,7 @@ namespace Core.Extensions
 
             services.AddScoped<IDiscountCalculator, DiscountCalculator>();
             
-            services.AddScoped<FourteenDaysDiscount>();
+            services.AddScoped<FirstPurchaseDiscount>();
             services.AddScoped<FourteenDaysDiscount>();
             return services;
         }

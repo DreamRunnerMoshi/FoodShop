@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Dtos;
+using Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,5 +10,6 @@ namespace Core.Services
     public interface IProductService
     {
         Task<List<Product>> GetProducts();
+        Task AddProduct(ProductAddRequest productAddRequest);
     }
 }
