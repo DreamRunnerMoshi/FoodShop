@@ -11,5 +11,6 @@ namespace Core.Services
     {
         Task<long> PlaceOrder(OrderRequest orderRequest);
         Task<List<Order>> GetMyOrders();
+        Task<long> PayTheOrder(OrderPaymentRequest orderPaymentRequest);
     }
 }

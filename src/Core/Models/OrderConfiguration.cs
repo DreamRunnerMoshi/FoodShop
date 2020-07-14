@@ -11,6 +11,7 @@ namespace Core.Models
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasMany(_=>_.OrderItems).WithOne(_=>_.Order);
+            builder.HasMany(_=>_.OrderPayments).WithOne(_=>_.Order);
         }
     }
 }

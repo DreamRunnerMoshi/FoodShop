@@ -33,5 +33,13 @@ namespace ShopAPI.Controllers
             var orderId = await orderService.PlaceOrder(orderRequest);
             return Ok(orderId);
         }
+
+        [HttpPost]
+        [Route("payment")]
+        public async Task<IActionResult> PayTheOrder(OrderPaymentRequest orderPaymentRequest)
+        {
+            var orderId = await orderService.PayTheOrder(orderPaymentRequest);
+            return Ok(orderId);
+        }
     }
 }

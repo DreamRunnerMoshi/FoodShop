@@ -25,7 +25,26 @@ namespace Core.Services
         public async Task<List<Order>> GetMyOrders()
         {
             var currentCustomer = await currentRequestDataProvider.GetCurrentRequestCustomer();
-            return await this.repository.GetQuery<Order>(_=>_.CustomerId == currentCustomer.Id).ToListAsync();
+            return await this.repository.GetQuery<Order>(_ => _.CustomerId == currentCustomer.Id).ToListAsync();
+        }
+
+        public async Task<long> PayTheOrder(OrderPaymentRequest orderPaymentRequest)
+        {
+            var order = await this.repository.Get<Order>(_ => _.Id == orderPaymentRequest.OrderId);
+            var orderPayment = new OrderPayment()
+            {
+                OrderId = orderPaymentRequest.OrderId,
+                Amount = orderPaymentRequest.Amount,
+                PaymentMethod = orderPaymentRequest.PaymentMethod,
+                PaymentTime = DateTime.UtcNow
+            };
+            order.PaidAmount += orderPayment.Amount;
+            order.OrderStatusId = (order.PaidAmount - order.TotalPayable) < 0.001M ? (short)OrderStatuses.Paid : (short)OrderStatuses.Pending;
+
+            await repository.Insert<OrderPayment>(orderPayment);
+            await repository.Save();
+
+            return order.Id;
         }
 
         public async Task<long> PlaceOrder(OrderRequest orderRequest)
@@ -43,7 +62,9 @@ namespace Core.Services
                 OrderStatusId = (short)OrderStatuses.Pending,
                 TotalPrice = totalPrice,
                 Discount = 0,
-                TotalPayable = totalPrice
+                TotalPayable = totalPrice,
+                UpdatedTime = DateTime.UtcNow,
+                PaidAmount = 0.0M
             };
 
             await this.repository.Insert<Order>(order);
