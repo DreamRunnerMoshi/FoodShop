@@ -25,6 +25,9 @@ namespace Core.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICurrentRequestDataProvider, CurrentRequestDataProvider>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IProductService, ProductService>();
             return services;
         }
 
@@ -34,7 +37,7 @@ namespace Core.Extensions
             services.AddScoped<ISecurityDataProvider, SecurityDataProvider>();
 
             services.AddSingleton<IJwtTokenHandler, JwtTokenHandler>();
-           
+
             services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
             services.AddSingleton<IJwtFactory, JwtFactory>();
@@ -115,12 +118,13 @@ namespace Core.Extensions
                     .AllowCredentials();
             }));
             return services;
-        }   
+        }
 
         public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {
             // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c => {
+            services.AddSwaggerGen(c =>
+            {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shop API", Version = "v1" });
                 //First we define the security scheme
                 c.AddSecurityDefinition("Bearer", //Name the security scheme
@@ -147,7 +151,7 @@ namespace Core.Extensions
         }
 
 
-        public static IServiceCollection RegisterDbAccess(this IServiceCollection services,IConfiguration config)
+        public static IServiceCollection RegisterDbAccess(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<ShopDbContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(typeof(ShopDbContext).Assembly.FullName)));
             services.AddScoped<IRepository, Repository.Repository>();
