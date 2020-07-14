@@ -15,11 +15,13 @@ namespace Core.Services
     {
         private readonly IRepository repository;
         private readonly ICurrentRequestDataProvider currentRequestDataProvider;
+        private readonly IDiscountCalculator discountCalculator;
 
-        public OrderService(IRepository repository, ICurrentRequestDataProvider currentRequestDataProvider)
+        public OrderService(IRepository repository, ICurrentRequestDataProvider currentRequestDataProvider, IDiscountCalculator discountCalculator)
         {
             this.repository = repository;
             this.currentRequestDataProvider = currentRequestDataProvider;
+            this.discountCalculator = discountCalculator;
         }
 
         public async Task<List<Order>> GetMyOrders()
@@ -39,7 +41,7 @@ namespace Core.Services
                 PaymentTime = DateTime.UtcNow
             };
             order.PaidAmount += orderPayment.Amount;
-            order.OrderStatusId = (order.PaidAmount - order.TotalPayable) < 0.001M ? (short)OrderStatuses.Paid : (short)OrderStatuses.Pending;
+            order.OrderStatusId = (order.TotalPayable - order.PaidAmount) < 0.001M ? (short)OrderStatuses.Paid : (short)OrderStatuses.Pending;
 
             await repository.Insert<OrderPayment>(orderPayment);
             await repository.Save();
@@ -55,14 +57,15 @@ namespace Core.Services
 
             List<OrderItem> orderItems = products.Select(_ => new OrderItem() { ProductId = _.Id, Price = _.Price }).ToList();
             var totalPrice = orderItems.Sum(_ => _.Price);
+            var totalDiscountPercentage = await this.discountCalculator.GetDiscountPercentage(currentCustomer.Id);
             var order = new Order()
             {
                 CustomerId = currentCustomer.Id,
                 OrderItems = orderItems,
                 OrderStatusId = (short)OrderStatuses.Pending,
                 TotalPrice = totalPrice,
-                Discount = 0,
-                TotalPayable = totalPrice,
+                Discount = totalDiscountPercentage,
+                TotalPayable = totalPrice - (totalPrice * totalDiscountPercentage / 100.0m),
                 UpdatedTime = DateTime.UtcNow,
                 PaidAmount = 0.0M
             };

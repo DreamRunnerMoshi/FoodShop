@@ -28,6 +28,11 @@ namespace Core.Extensions
             services.AddScoped<ICurrentRequestDataProvider, CurrentRequestDataProvider>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<IDiscountCalculator, DiscountCalculator>();
+            
+            services.AddScoped<FourteenDaysDiscount>();
+            services.AddScoped<FourteenDaysDiscount>();
             return services;
         }
 
